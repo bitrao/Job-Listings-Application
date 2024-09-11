@@ -1,0 +1,52 @@
+<!DOCTYPE html">
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css" media="all" />
+</head>
+
+<body>
+
+    <div id="shell" height=auto>
+        <div id="header">
+          <h1 class="title"><a href="/">Jobs Listing</a></h1>
+          <div class="top-bar">
+            <div class="links">    {% block links %}       {% endblock %}  </div>
+            <div class="cl">&nbsp;</div>
+            <div id="search">
+              <form action="/search" method="POST">
+                <label for="search-string">I'M LOOKING FOR</label>
+                <div class="fields">
+                  <input type="text" name="searchword" class="field" />
+                  <input type="submit" name="search" value="" class="submit" />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div id="navigation">
+          <nav>
+            <ul>
+                <li><a href="{{ url_for('routes.index') }}">Home</a></li>
+                {% for category in categories %}
+                    <li><a href="{{ url_for('routes.category_page', category_url=category.url) }}">{{ category.display_name }}</a></li>
+                {% endfor %}
+            </ul>
+          </nav>
+          <div class="cl">&nbsp;</div>
+        </div>
+      
+        {% block body %}
+        {% endblock %}
+
+    </div>
+    <main>
+        {% block content %}
+        <!-- Content will be inserted here -->
+        {% endblock %}
+    </main>
+
+{% block script %}
+{% endblock %}
+
+</body>
+</html>

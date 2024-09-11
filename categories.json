@@ -1,0 +1,24 @@
+{
+    "categories": [
+        {
+            "display_name": "Accounting&Finance",
+            "url": "accounting-finance",
+            "file": "accounting_finance.csv"
+        },
+        {
+            "display_name": "Engineering",
+            "url": "engineering",
+            "file": "engineering.csv"
+        },
+        {
+            "display_name": "Healthcare&Nursing",
+            "url": "healthcare-nursing",
+            "file": "healthcare_nursing.csv"
+        },
+        {
+            "display_name": "Sales",
+            "url": "sales",
+            "file": "sales.csv"
+        }
+    ]
+}
