@@ -1,0 +1,7 @@
+# Python cache files
+__pycache__/
+
+# Operating system files
+.DS_Store
+
+Pipfile.lock

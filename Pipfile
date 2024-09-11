@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+python-dotenv = "*"
+
+[dev-packages]
+
+[scripts]
+start = "flask --debug run"
+
+[requires]
+python_version = "3.9"
