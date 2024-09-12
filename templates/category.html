@@ -3,6 +3,21 @@
 {% block content %}
 
     <h1>{{ category.display_name }}</h1>
-    <p>Data file: {{ data_file }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, row in data.iterrows() %}
+                <tr>
+                    <td>{{ row['title'] }}</td>
+                    <td>{{ row['description'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock %}
