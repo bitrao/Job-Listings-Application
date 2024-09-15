@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ entry.title }}{% endblock %}
+
+{% block content %}
+<div id="main">
+    <div id="content">
+      <div class="box" style='height: auto'>
+        <a href="{{ url_for('routes.category_page', category_url=category.url) }}">Back to {{ category.display_name }}</a>
+        <div class="cl">&nbsp;</div>
+        <div class="posts">
+          <h1 id="data-title">{{ entry.title }}</h1>
+          <div class="cl">&nbsp;</div>
+          <div class="post-article">
+            <div class="data-article" id="data-content">
+                <p>{{ entry.description }}</p>
+            </div>
+            </div>
+            <div class="cl">&nbsp;</div>
+         </div>
+     </div>
+        <div class="cl">&nbsp;</div>
+    </div>
+    <div class="cl">&nbsp;</div>
+</div>
+{% endblock %}
