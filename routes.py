@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 import json
 import pandas as pd
 import os
@@ -15,7 +15,7 @@ def load_categories():
 @bp.route("/")
 def index():
     categories = load_categories()
-    return render_template("base.html", categories=categories)
+    return render_template("home.html", categories=categories)
 
 
 @bp.route("/<category_url>")
@@ -37,3 +37,30 @@ def category_page(category_url):
         )
     else:
         return "Category not found", 404
+    
+
+@bp.route("/create", methods=["GET", "POST"])
+def create():
+    categories = load_categories()
+    if request.method == "POST":
+        title = request.form["title"]
+        description = request.form["description"]
+        category = request.form["category"]
+        
+        job_listing = {
+            "title": title,
+            "description": description,
+        }
+
+        category = category.replace("-", "_")
+        
+        csv_file_path = os.path.join("data", f"{category}.csv")
+        df = pd.DataFrame([job_listing])
+        if os.path.exists(csv_file_path):
+            df.to_csv(csv_file_path, mode="a", header=False, index=False) 
+        else:
+            df.to_csv(csv_file_path, index=False)
+
+        return render_template("create_job_listing.html", categories=categories, success=True)
+
+    return render_template("create_job_listing.html", categories=categories)
