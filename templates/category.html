@@ -2,22 +2,23 @@
 
 {% block content %}
 
-    <h1>{{ category.display_name }}</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for index, row in data.iterrows() %}
-                <tr>
-                    <td>{{ row['title'] }}</td>
-                    <td>{{ row['description'] }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="container mt-5">
+    <h1>{{category.display_name}} Job Listings</h1>
+    {% for index, row in data.iterrows() %}
+    <div class="card mt-3">
+        <div class="row g-0">
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{row['title']}}</h5>
+                    <p class="card-text">{{row['description'][:150]}}... <strong><a href="">Read more</a></strong></p>
+                </div>
+            </div> 
+            <div class="col-md-4 d-flex justify-content-end">
+                <img src="/static/imgs/bg.jpg" class="img-fluid rounded-start card-img" alt="Job image">
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 
 {% endblock %}
