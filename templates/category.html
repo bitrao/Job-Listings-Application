@@ -10,7 +10,7 @@
             <div class="col-md-8">
                 <div class="card-body">
                     <h5 class="card-title">{{row['title']}}</h5>
-                    <p class="card-text">{{row['description'][:150]}}... <strong><a href="">Read more</a></strong></p>
+                    <p class="card-text">{{row['description'][:150]}}... <strong><a href="{{ url_for('routes.job_page', category_url=category.url, entry_id=row['id']) }}">Read more</a></strong></p>
                 </div>
             </div> 
             <div class="col-md-4 d-flex justify-content-end">
