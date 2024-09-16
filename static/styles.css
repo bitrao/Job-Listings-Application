@@ -34,6 +34,15 @@ footer {
     padding-left: 80px;
 }
 
+a {
+    color: green;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
 .bg-darkgreen {
     background-color: #163c22;
 }
