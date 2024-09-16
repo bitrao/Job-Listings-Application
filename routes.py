@@ -65,14 +65,22 @@ def create():
         description = request.form["description"]
         category = request.form["category"]
         
-        job_listing = {
-            "title": title,
-            "description": description,
-        }
-
         category = category.replace("-", "_")
         
         csv_file_path = os.path.join("data", f"{category}.csv")
+        # get the last id
+        try:
+            data = pd.read_csv(csv_file_path)
+            last_id = data["id"].max() + 1
+        except FileNotFoundError:
+            last_id = 1
+
+        job_listing = {
+            "id": last_id,
+            "title": title,
+            "description": description,
+        }
+        
         df = pd.DataFrame([job_listing])
         if os.path.exists(csv_file_path):
             df.to_csv(csv_file_path, mode="a", header=False, index=False) 
