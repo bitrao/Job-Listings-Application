@@ -1,0 +1,102 @@
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+footer {
+    margin-top: 20px;
+}
+
+.navbar {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 60px;
+}
+
+.navbar a:hover {
+    text-decoration: underline;
+}
+
+.top-nav h1 {
+    margin-bottom: 0;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 80px;
+}
+
+.bg-darkgreen {
+    background-color: #163c22;
+}
+
+.bg-lightgreen {
+    background-color: #1e4d2b;
+}
+
+.page-link {
+    color: green;
+}
+
+.page-link:hover {
+    color: white;
+    background-color: lightgray;
+    border-color: lightgray;
+}
+
+.page-item.active .page-link {
+    background-color: green;
+    border-color: green !important;
+    color: white;
+}
+
+.card-title {
+    font-size: 25px;
+}
+
+.card-text {
+    font-size: 20px;
+}
+
+.card-text a {
+    color: green;
+    text-decoration: none;
+}
+
+.card-text a:hover {
+    text-decoration: underline;
+    color: darkgreen;
+}
+
+.card-img {
+    max-width: 300px;
+    height:auto;
+}
+
+.btn {
+    background-color: #1e4d2b;
+    border-color: white;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #163c22;
+    color: white;
+}
+
+.small-form {
+    width: 450px; 
+    margin: 0 auto; 
+    padding: 20px 25px 30px 25px; 
+    border: .5px solid #ccc; 
+    border-radius: 5px; 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
+}
