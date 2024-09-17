@@ -20,31 +20,4 @@
     </div>
     {% endfor %}
 </div>
-
-<!--
-    <h1 >{{ category.display_name }}</h1>
-    <div id="main" style='height: auto'>
-        <div id="content" style='height: auto'>
-          
-            <div class="box" style='height: auto'>
-                <div class="cl">&nbsp;</div>
-                <div class="posts">
-                    {% for index, row in data.iterrows() %}
-                        <div class="post-subpage">
-                            <div class="data">
-                            <h4><a href="{{ url_for('routes.job_page', category_url=category.url, entry_id=row['id']) }}">
-                                {{ row['title'] }} 
-                            </a></h4>
-                            <p> {{ row['description'][0:800] }}</p>
-                            </div>
-                        </div>
-                  {% endfor %}
-                  <div class="cl">&nbsp;</div>
-                </div>
-              </div>
-      
-          <div class="cl">&nbsp;</div>
-        </div>
-        <div class="cl">&nbsp;</div>
-      </div> -->
 {% endblock %}

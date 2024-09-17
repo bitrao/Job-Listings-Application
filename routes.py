@@ -12,10 +12,31 @@ def load_categories():
         return json.load(f)["categories"]
 
 
+# Load data from all CSV files
+def load_all_data():
+    categories = load_categories()
+    all_data = []
+    for category in categories:
+        csv_file_path = os.path.join("data", category["file"])
+        try:
+            data = pd.read_csv(csv_file_path)[0:2]
+            all_data.append(
+                {
+                    "display_name": category["display_name"],
+                    "url": category["url"],
+                    "data": data,
+                }
+            )
+        except FileNotFoundError:
+            all_data[category["display_name"]] = None
+    return all_data
+
+
 @bp.route("/")
 def index():
     categories = load_categories()
-    return render_template("home.html", categories=categories)
+    all_data = load_all_data()
+    return render_template("home.html", categories=categories, all_data=all_data)
 
 
 @bp.route("/<category_url>")
@@ -37,6 +58,7 @@ def category_page(category_url):
         )
     else:
         return "Category not found", 404
+
 
 @bp.route("/<category_url>/<int:entry_id>")
 def job_page(category_url, entry_id):
@@ -64,9 +86,9 @@ def create():
         title = request.form["title"]
         description = request.form["description"]
         category = request.form["category"]
-        
+
         category = category.replace("-", "_")
-        
+
         csv_file_path = os.path.join("data", f"{category}.csv")
         # get the last id
         try:
@@ -80,13 +102,15 @@ def create():
             "title": title,
             "description": description,
         }
-        
+
         df = pd.DataFrame([job_listing])
         if os.path.exists(csv_file_path):
-            df.to_csv(csv_file_path, mode="a", header=False, index=False) 
+            df.to_csv(csv_file_path, mode="a", header=False, index=False)
         else:
             df.to_csv(csv_file_path, index=False)
 
-        return render_template("create_job_listing.html", categories=categories, success=True)
+        return render_template(
+            "create_job_listing.html", categories=categories, success=True
+        )
 
     return render_template("create_job_listing.html", categories=categories)
