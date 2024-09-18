@@ -9,6 +9,7 @@ python-dotenv = "*"
 pandas = "*"
 gensim = "*"
 scikit-learn = "*"
+nltk = "*"
 
 [dev-packages]
 

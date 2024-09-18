@@ -4,8 +4,10 @@ import pandas as pd
 import os
 import numpy as np
 import pickle
-import gensim.downloader as api
 import sklearn
+from nltk.tokenize import sent_tokenize, RegexpTokenizer
+from itertools import chain
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 # Create a Blueprint for routes
 bp = Blueprint("routes", __name__)
@@ -16,6 +18,31 @@ category_mapping = {
     2: "healthcare-nursing",
     3: "sales",
 }
+
+with open("removed_words.txt", "r") as file:
+    removed_words = file.read().splitlines()
+
+
+def tokenize(text):
+    # make the text lowercase
+    text_lc = text.lower()
+
+    # segment the string into sentences
+    sentences = sent_tokenize(text_lc)
+
+    # tokenize using regex pattern
+    pattern = r"[a-zA-Z]+(?:[-'][a-zA-Z]+)?"
+    tokenizer = RegexpTokenizer(
+        pattern
+    )  # create a tokenizer object that uses the pattern.
+    tokens = [
+        tokenizer.tokenize(sentence) for sentence in sentences
+    ]  # tokenize each sentence
+
+    # flatten the list
+    tokens_res = list(chain.from_iterable(tokens))
+
+    return tokens_res
 
 
 def gen_docVecs(wv, tk_txts, tfidf=[]):  # generate vector representation for documents
@@ -140,14 +167,16 @@ def create():
 
             # Tokenize the content of the .txt file so as to input to the saved model
             # Here, as an example,  we just do a very simple tokenization
-            tokenized_data = description.split(" ")
+            tokenized_data = tokenize(description)
+            tokenized_data = [word for word in tokenized_data if len(word) >= 2]
+            tokenized_data = [
+                word for word in tokenized_data if word not in removed_words
+            ]
 
-            # Load the FastText model
-            bbcFT = api.load("word2vec-google-news-300")
-            bbcFT_wv = bbcFT
+            with open("tVectorizer.pkl", "rb") as f:
+                tVectorizer = pickle.load(f)
 
-            # Generate vector representation of the tokenized data
-            bbcFT_dvs = gen_docVecs(bbcFT_wv, [tokenized_data])
+            count_features = tVectorizer.transform([" ".join(tokenized_data)])
 
             # Load the LR model
             models = []
@@ -159,8 +188,10 @@ def create():
             y_pred = np.apply_along_axis(
                 lambda x: np.argmax(np.bincount(x)),
                 axis=0,
-                arr=[model.predict(bbcFT_dvs).astype(int) for model in models],
+                arr=[model.predict(count_features).astype(int) for model in models],
             )
+            print([model.predict(count_features).astype(int) for model in models])
+            print(y_pred)
             y_pred = category_mapping[y_pred[0]]
             print(y_pred)
             return render_template(
@@ -171,30 +202,41 @@ def create():
                 description=description,
             )
         elif request.form["button"] == "Save":
-            category = request.form["category"]
+            category = request.form.get("category")
 
-            job_listing = {
-                "title": title,
-                "description": description,
-            }
-
-            category = category.replace("-", "_")
-
-            csv_file_path = os.path.join("data", f"{category}.csv")
-            df = pd.DataFrame([job_listing])
-            if os.path.exists(csv_file_path):
-                df.to_csv(csv_file_path, mode="a", header=False, index=False)
+            if not category:
+                return render_template(
+                    "create_job_listing.html",
+                    categories=categories,
+                    prediction=category,
+                    title=title,
+                    description=description,
+                    category_flag="Category must be selected.",
+                )
             else:
-                df.to_csv(csv_file_path, index=False)
 
-            return render_template(
-                "create_job_listing.html",
-                categories=categories,
-                prediction=category,
-                title=title,
-                description=description,
-                success=True,
-            )
+                job_listing = {
+                    "title": title,
+                    "description": description,
+                }
+
+                category = category.replace("-", "_")
+
+                csv_file_path = os.path.join("data", f"{category}.csv")
+                df = pd.DataFrame([job_listing])
+                if os.path.exists(csv_file_path):
+                    df.to_csv(csv_file_path, mode="a", header=False, index=False)
+                else:
+                    df.to_csv(csv_file_path, index=False)
+
+                return render_template(
+                    "create_job_listing.html",
+                    categories=categories,
+                    prediction=category,
+                    title=title,
+                    description=description,
+                    success=True,
+                )
 
     return render_template("create_job_listing.html", categories=categories)
 
