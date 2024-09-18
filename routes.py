@@ -1,11 +1,10 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, redirect, render_template, request, session, url_for
 import json
 import pandas as pd
 import os
 
 # Create a Blueprint for routes
 bp = Blueprint("routes", __name__)
-
 
 def load_categories():
     with open("categories.json") as f:
@@ -30,6 +29,7 @@ def load_all_data():
         except FileNotFoundError:
             all_data[category["display_name"]] = None
     return all_data
+
 
 
 @bp.route("/")
@@ -114,3 +114,16 @@ def create():
         )
 
     return render_template("create_job_listing.html", categories=categories)
+
+
+@bp.route("/login")
+def login():
+    session["is_logged_in"] = True
+    
+    return redirect(url_for("routes.index"))
+
+
+@bp.route("/logout")
+def logout():
+    session.pop("is_logged_in", None)
+    return redirect(url_for("routes.index"))

@@ -43,6 +43,10 @@ a:hover {
     text-decoration: underline;
 }
 
+.title:hover {
+    text-decoration: none;
+}
+
 .bg-darkgreen {
     background-color: #163c22;
 }
