@@ -2,9 +2,59 @@ from flask import Blueprint, redirect, render_template, request, session, url_fo
 import json
 import pandas as pd
 import os
+import numpy as np
+import pickle
+import gensim.downloader as api
+import sklearn
 
 # Create a Blueprint for routes
 bp = Blueprint("routes", __name__)
+
+category_mapping = {
+    0: "accounting-finance",
+    1: "engineering",
+    2: "healthcare-nursing",
+    3: "sales",
+}
+
+
+def gen_docVecs(wv, tk_txts, tfidf=[]):  # generate vector representation for documents
+    docs_vectors = pd.DataFrame()  # creating empty final dataframe
+    # stopwords = nltk.corpus.stopwords.words('english') # removing stop words
+
+    for i in range(0, len(tk_txts)):
+        tokens = list(set(tk_txts[i]))  # get the list of distinct words of the document
+
+        temp = (
+            pd.DataFrame()
+        )  # creating a temporary dataframe(store value for 1st doc & for 2nd doc remove the details of 1st & proced through 2nd and so on..)
+        for w_ind in range(
+            0, len(tokens)
+        ):  # looping through each word of a single document and spliting through space
+            try:
+                word = tokens[w_ind]
+                word_vec = wv[
+                    word
+                ]  # if word is present in embeddings(goole provides weights associate with words(300)) then proceed
+
+                if tfidf:
+                    word_weight = float(tfidf[i][word])
+                else:
+                    word_weight = 1
+                temp = pd.concat(
+                    [temp, pd.Series(word_vec * word_weight).to_frame().T],
+                    ignore_index=True,
+                )  # if word is present then append it to temporary dataframe
+            except:
+                pass
+        doc_vector = (
+            temp.sum().to_frame().T
+        )  # take the sum of each column(w0, w1, w2,........w300)
+        docs_vectors = pd.concat(
+            [docs_vectors, doc_vector], ignore_index=True
+        )  # append each document value to the final dataframe
+    return docs_vectors
+
 
 def load_categories():
     with open("categories.json") as f:
@@ -29,7 +79,6 @@ def load_all_data():
         except FileNotFoundError:
             all_data[category["display_name"]] = None
     return all_data
-
 
 
 @bp.route("/")
@@ -85,33 +134,67 @@ def create():
     if request.method == "POST":
         title = request.form["title"]
         description = request.form["description"]
-        category = request.form["category"]
 
-        category = category.replace("-", "_")
+        # Classify the content
+        if request.form["button"] == "Classify":
 
-        csv_file_path = os.path.join("data", f"{category}.csv")
-        # get the last id
-        try:
-            data = pd.read_csv(csv_file_path)
-            last_id = data["id"].max() + 1
-        except FileNotFoundError:
-            last_id = 1
+            # Tokenize the content of the .txt file so as to input to the saved model
+            # Here, as an example,  we just do a very simple tokenization
+            tokenized_data = description.split(" ")
 
-        job_listing = {
-            "id": last_id,
-            "title": title,
-            "description": description,
-        }
+            # Load the FastText model
+            bbcFT = api.load("word2vec-google-news-300")
+            bbcFT_wv = bbcFT
 
-        df = pd.DataFrame([job_listing])
-        if os.path.exists(csv_file_path):
-            df.to_csv(csv_file_path, mode="a", header=False, index=False)
-        else:
-            df.to_csv(csv_file_path, index=False)
+            # Generate vector representation of the tokenized data
+            bbcFT_dvs = gen_docVecs(bbcFT_wv, [tokenized_data])
 
-        return render_template(
-            "create_job_listing.html", categories=categories, success=True
-        )
+            # Load the LR model
+            models = []
+            for i in range(5):
+                with open(f"model_{i}.pkl", "rb") as file:
+                    models.append(pickle.load(file))
+
+            # Predict the label of tokenized_data
+            y_pred = np.apply_along_axis(
+                lambda x: np.argmax(np.bincount(x)),
+                axis=0,
+                arr=[model.predict(bbcFT_dvs).astype(int) for model in models],
+            )
+            y_pred = category_mapping[y_pred[0]]
+            print(y_pred)
+            return render_template(
+                "create_job_listing.html",
+                categories=categories,
+                prediction=y_pred,
+                title=title,
+                description=description,
+            )
+        elif request.form["button"] == "Save":
+            category = request.form["category"]
+
+            job_listing = {
+                "title": title,
+                "description": description,
+            }
+
+            category = category.replace("-", "_")
+
+            csv_file_path = os.path.join("data", f"{category}.csv")
+            df = pd.DataFrame([job_listing])
+            if os.path.exists(csv_file_path):
+                df.to_csv(csv_file_path, mode="a", header=False, index=False)
+            else:
+                df.to_csv(csv_file_path, index=False)
+
+            return render_template(
+                "create_job_listing.html",
+                categories=categories,
+                prediction=category,
+                title=title,
+                description=description,
+                success=True,
+            )
 
     return render_template("create_job_listing.html", categories=categories)
 
@@ -119,7 +202,7 @@ def create():
 @bp.route("/login")
 def login():
     session["is_logged_in"] = True
-    
+
     return redirect(url_for("routes.index"))
 
 

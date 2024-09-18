@@ -14,22 +14,25 @@
     <form class="small-form" method="POST" action="/create">
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="title" name="title">
+            <input type="text" class="form-control" id="title" name="title" value="{{ title }}">
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" name="description" rows="8"></textarea>
+            <textarea class="form-control" id="description" name="description" rows="8">{{ description }}</textarea>
         </div>
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
             <select class="form-select" id="category" name="category">
                 <option selected disabled>Select a category</option>
                 {% for category in categories %}
-                <option value="{{category.url}}">{{category.display_name}}</option>
+                <option value="{{category.url}}" {% if prediction==category.url %} selected {% endif %}>{{category.display_name}}</option>
                 {% endfor %}
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <p>
+            <input type="submit" name="button" value="Classify" />
+            <input type="submit" name="button" value="Save">
+        </p>
     </form>
 </div>
 
