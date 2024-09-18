@@ -3,27 +3,17 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<!-- <div class="container mt-5 text-center">
-    <h1>Welcome to the Home Page</h1>
-</div> -->
 
-<div class="grid-container">
+<div class="home grid-container m-5">
     {% for category in all_data %}
-        <div>
-            <h2>{{ category.display_name }}</h2>
+        <div class="">
+            <a href="/{{category.url}}"><h3 class="category-title">{{ category.display_name }}</h3></a>
             {% if category.data is not none %}
                 {% for index, row in category.data.iterrows() %}
-                    <div class="card mt-3">
-                        <div class="row g-0">
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{row['title']}}</h5>
-                                    <p class="card-text">{{row['description'][:150]}}... <strong><a href="{{ url_for('routes.job_page', category_url=category.url, entry_id=row['id']) }}">Read more</a></strong></p>
-                                </div>
-                            </div> 
-                            <div class="col-md-4 d-flex justify-content-end">
-                                <img src="/static/imgs/bg.jpg" class="img-fluid rounded-start card-img" alt="Job image">
-                            </div>
+                    <div class="card mt-3"> 
+                        <div class="card-body">
+                            <h5 class="card-title">{{row['title']}}</h5>
+                            <p class="card-text">{{row['description'][:180]}}... <strong><a href="{{ url_for('routes.job_page', category_url=category.url, entry_id=row['id']) }}">Read more</a></strong></p>
                         </div>
                     </div>
                 {% endfor %}
