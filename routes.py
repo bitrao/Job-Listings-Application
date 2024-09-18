@@ -236,9 +236,6 @@ def create():
                 return render_template(
                     "create_job_listing.html",
                     categories=categories,
-                    prediction=category,
-                    title=title,
-                    description=description,
                     success=True,
                 )
 
