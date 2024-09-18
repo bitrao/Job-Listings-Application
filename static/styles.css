@@ -117,3 +117,21 @@ a:hover {
     grid-template-columns: auto auto;
     gap: 50px;
 }
+
+.category-title:hover {
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.home .card-title {
+    font-size: 20px;
+}
+
+.home .card-text {
+    font-size: 15px;
+}
+
+.home h3 {
+    color: #1e4d2b;
+    font-weight: 500;
+}
