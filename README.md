@@ -1,4 +1,4 @@
-# Jobs Listing Application
+# Job Listings Application
 
 ## Run the project
 
