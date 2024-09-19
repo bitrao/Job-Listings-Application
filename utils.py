@@ -4,6 +4,7 @@ import sklearn
 from nltk.tokenize import sent_tokenize, RegexpTokenizer
 from itertools import chain
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+import os
 
 
 def tokenize(text):
