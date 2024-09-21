@@ -79,7 +79,7 @@ def load_all_data():
     for category in categories:
         csv_file_path = os.path.join("data", category["file"])
         try:
-            data = pd.read_csv(csv_file_path)[0:2]
+            data = pd.read_csv(csv_file_path)
             all_data.append(
                 {
                     "display_name": category["display_name"],
